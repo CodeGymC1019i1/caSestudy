@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>racing car</title>
+    <script src="car.js"></script>
+    <script src="impediment.js"></script>
+</head>
+<body onkeydown="racingCar.moveCar(event)">
+    <img src="car.png" height="100" width="50" style="display: none"/>
+    <img src="road3.png" height="623" width="374" style="display: none"/>
+    <img src="road2.png" height="623" width="374" style="display: none"/>
+    <img src="road1.png" height="623" width="374" style="display: none"/>
+    <img src="car0.png" height="100" width="50" style="display: none"/>
+    <img src="car1.png" height="100" width="50" style="display: none"/>
+    <img src="car2.png" height="100" width="50" style="display: none"/>
+    <canvas id="myCanvas" width="374px" height="623px" style="border: 1px solid black" >
+        Trình duyệt của bạn không hỗ trợ thẻ canvas trong HTML5</canvas>
+    <script>
+
+        let canvas = document.getElementById("myCanvas");
+        let ctx = canvas.getContext("2d");
+        let arrImpe = [];
+        let arrRoad = [];
+        let z = 0
+        let racingCar = new RacingCar(canvas);
+        racingCar.begin();
+        let multiImpe = new MultiImpediment(canvas)
+        arrImpe = multiImpe.createMultiImpediment();
+
+        function creatRoad() {
+            let imgRoad1 = new Image();
+            imgRoad1.src = "road1.png";
+            let imgRoad2 = new Image();
+            imgRoad2.src = "road2.png";
+            let imgRoad3 = new Image();
+            imgRoad3.src = "road3.png";
+
+            for (let i = 0; i < 10; i++) {
+                arrRoad[i] = imgRoad1;
+            }
+            for (let i = 10; i < 20; i++) {
+                arrRoad[i] = imgRoad2;
+            }
+            for (let i = 20; i < 30; i++) {
+                arrRoad[i] = imgRoad3;
+            }
+            if (z < arrRoad.length) {
+                ctx.drawImage(arrRoad[z], 0, 0);
+                if (z ===29)
+                    z= 0;
+            }
+            z++;
+        }
+
+        function moveMultiImpediment() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            creatRoad();
+            racingCar.begin();
+            for (let i = 0; i < 3; i++) {
+                arrImpe[i].drawImpediment();
+                arrImpe[i].moveDown();
+                accident(racingCar.car,arrImpe[i]);
+            }
+        }
+
+        function accident(car1,car2) {
+            if(car1.x+car1.width > car2.x + 15 && car1.x + 15 < car2.x+car2.width &&
+                car1.y < car2.y+car2.height-30 && car1.y+car1.height-30>car2.y){
+                clearInterval(play);
+                alert("you lose");
+            }
+        }
+
+        let play = setInterval(moveMultiImpediment,10);
+
+
+    </script>
+</body>
+</html>
